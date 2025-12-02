@@ -12,7 +12,7 @@ button{cursor:pointer}
 </head>
 <body>
 
-<h2>تسجيل الدخول</h2>
+<h2>تسجيل دخول المودريتور</h2>
 <div id="loginDiv">
   <input type="text" id="username" placeholder="اسم المستخدم">
   <input type="password" id="password" placeholder="كلمة المرور">
@@ -41,8 +41,8 @@ const moderators = [
 
 // تسجيل دخول
 function login(){
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
   const mod = moderators.find(m => m.username===username && m.password===password);
   if(mod){
     alert('تم تسجيل الدخول بنجاح!');
@@ -72,25 +72,38 @@ function addProduct(){
 
 // حفظ الأوردر وإرسال البيانات للـ Google Sheet
 function submitOrder(){
-  const clientName = document.getElementById('clientName').value;
-  const clientPhone = document.getElementById('clientPhone').value;
+  const clientName = document.getElementById('clientName').value.trim();
+  const clientPhone = document.getElementById('clientPhone').value.trim();
   
+  if(!clientName || !clientPhone){
+    alert('يرجى إدخال اسم العميل ورقم الموبايل.');
+    return;
+  }
+
   const prodsDivs = document.querySelectorAll('.product-block');
+  if(prodsDivs.length === 0){
+    alert('يرجى إضافة منتج واحد على الأقل.');
+    return;
+  }
+
   const products = Array.from(prodsDivs).map(div => ({
-    productCode: div.querySelector('.productCode').value,
-    color: div.querySelector('.color').value,
-    size: div.querySelector('.size').value,
-    price: div.querySelector('.price').value
+    productCode: div.querySelector('.productCode').value.trim() || '',
+    color: div.querySelector('.color').value.trim() || '',
+    size: div.querySelector('.size').value.trim() || '',
+    price: div.querySelector('.price').value.trim() || '0'
   }));
-  
+
   const payload = {
     moderator: window.currentModerator,
     clientName: clientName,
     clientPhone: clientPhone,
     products: products
   };
-  
-  fetch('https://script.google.com/macros/s/AKfycbzQqfeks-PrIdyY4_wp8dLFgHq-tHsCZPSUMhSSzxuVj2sEcKiNJr3ZdaWKp9hLMsE/exec', { // استبدل بالرابط النهائي من Google Apps Script
+
+  // تحقق من صحة JSON قبل الإرسال
+  console.log('Payload:', JSON.stringify(payload));
+
+  fetch('https://script.google.com/macros/s/AKfycbzQqfeks-PrIdyY4_wp8dLFgHq-tHsCZPSUMhSSzxuVj2sEcKiNJr3ZdaWKp9hLMsE/exec', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify(payload)
@@ -114,4 +127,3 @@ function submitOrder(){
 
 </body>
 </html>
-
