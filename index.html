@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>نظام تأكيد الأوردرات</title>
+<style>
+body{font-family:Arial;padding:20px;direction:rtl;max-width:700px;margin:auto}
+input,button,select{width:100%;padding:8px;margin:6px 0}
+button{cursor:pointer}
+.product-block{border:1px solid #ccc;padding:10px;margin-top:10px;border-radius:5px}
+</style>
+</head>
+<body>
+
+<h2>تسجيل دخول المودريتور</h2>
+<div id="loginDiv">
+  <input type="text" id="username" placeholder="اسم المستخدم">
+  <input type="password" id="password" placeholder="كلمة المرور">
+  <button onclick="login()">تسجيل دخول</button>
+  <p id="loginMsg" style="color:red"></p>
+</div>
+
+<div id="orderDiv" style="display:none;">
+  <h2>إضافة أوردرات</h2>
+  <input type="text" id="clientName" placeholder="اسم العميل">
+  <input type="text" id="phone" placeholder="رقم الموبايل">
+
+  <div id="productsContainer"></div>
+  <button onclick="addProduct()">إضافة منتج</button>
+  <button onclick="submitOrder()">حفظ الأوردر</button>
+</div>
+
+<script>
+let moderator = '';
+let products = [];
+
+function login(){
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  // تحقق محلي مؤقت (يمكن تعديل للتأكد من Web App)
+  fetch('YOUR_WEB_APP_URL', { // مؤقت للتحقق
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({checkLogin:true, username,password})
+  }).then(r=>r.json()).then(res=>{
+    if(res.status==='ok'){
+      moderator = username;
+      document.getElementById('loginDiv').style.display='none';
+      document.getElementById('orderDiv').style.display='block';
+      addProduct(); // إضافة أول منتج تلقائياً
+    }else{
+      document.getElementById('loginMsg').innerText='خطأ في اسم المستخدم أو كلمة المرور';
+    }
+  }).catch(e=>console.log(e));
+}
+
+function addProduct(){
+  const container = document.getElementById('productsContainer');
+  const idx = products.length;
+  const div = document.createElement('div');
+  div.className = 'product-block';
+  div.innerHTML = `
+    <h4>المنتج ${idx+1}</h4>
+    <input placeholder="كود المنتج" class="productCode">
+    <input placeholder="اللون" class="color">
+    <input placeholder="المقاس" class="size">
+    <input placeholder="السعر" class="price" type="number">
+  `;
+  container.appendChild(div);
+  products.push(div);
+}
+
+function submitOrder(){
+  const clientName = document.getElementById('clientName').value;
+  const phone = document.getElementById('phone').value;
+  const prods = products.map(div=>({
+    productCode: div.querySelector('.productCode').value,
+    color: div.querySelector('.color').value,
+    size: div.querySelector('.size').value,
+    price: div.querySelector('.price').value
+  }));
+
+  fetch('YOUR_WEB_APP_URL', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({moderator, clientName, phone, products:prods})
+  }).then(r=>r.json()).then(res=>{
+    if(res.status==='ok') alert('تم حفظ الأوردر بنجاح!');
+    else alert('خطأ: '+res.error);
+  }).catch(e=>alert(e.message));
+}
+</script>
+
+</body>
+</html>
