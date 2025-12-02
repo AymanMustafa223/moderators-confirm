@@ -103,7 +103,7 @@ function submitOrder(){
   // تحقق من صحة JSON قبل الإرسال
   console.log('Payload:', JSON.stringify(payload));
 
-  fetch('https://script.google.com/macros/s/AKfycbzQqfeks-PrIdyY4_wp8dLFgHq-tHsCZPSUMhSSzxuVj2sEcKiNJr3ZdaWKp9hLMsE/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbwM7tqibWpTD0qQ7LLTew7x_l15M1TtnzqhKlT1kaKmNiSDwwYXl6tBd6zPVyb1jgw/exec', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify(payload)
@@ -127,3 +127,4 @@ function submitOrder(){
 
 </body>
 </html>
+
