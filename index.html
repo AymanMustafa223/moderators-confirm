@@ -70,7 +70,7 @@ function addProduct(){
   container.appendChild(div);
 }
 
-// حفظ الأوردر وجمع البيانات
+// حفظ الأوردر وإرسال البيانات للـ Google Sheet
 function submitOrder(){
   const clientName = document.getElementById('clientName').value;
   const clientPhone = document.getElementById('clientPhone').value;
@@ -83,12 +83,32 @@ function submitOrder(){
     price: div.querySelector('.price').value
   }));
   
-  // عرض البيانات في console للتجربة
-  console.log('المودريتور:', window.currentModerator);
-  console.log('العميل:', clientName, clientPhone);
-  console.log('المنتجات:', products);
+  const payload = {
+    moderator: window.currentModerator,
+    clientName: clientName,
+    clientPhone: clientPhone,
+    products: products
+  };
   
-  alert('تم حفظ الأوردر! تحقق من console للبيانات.');
+  fetch('YOUR_WEB_APP_URL', { // استبدل بالرابط النهائي من Google Apps Script
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.status==='ok'){
+      alert('تم حفظ الأوردر بنجاح!');
+      // تنظيف الفورم بعد الحفظ
+      document.getElementById('clientName').value='';
+      document.getElementById('clientPhone').value='';
+      document.getElementById('productsContainer').innerHTML='';
+      addProduct(); // إضافة منتج فارغ جديد
+    } else {
+      alert('حدث خطأ: '+data.error);
+    }
+  })
+  .catch(err => alert('حدث خطأ: '+err.message));
 }
 </script>
 
