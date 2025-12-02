@@ -90,7 +90,7 @@ function submitOrder(){
     products: products
   };
   
-  fetch('YOUR_WEB_APP_URL', { // استبدل بالرابط النهائي من Google Apps Script
+  fetch('https://script.google.com/macros/s/AKfycbzQqfeks-PrIdyY4_wp8dLFgHq-tHsCZPSUMhSSzxuVj2sEcKiNJr3ZdaWKp9hLMsE/exec', { // استبدل بالرابط النهائي من Google Apps Script
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify(payload)
@@ -114,3 +114,4 @@ function submitOrder(){
 
 </body>
 </html>
+
