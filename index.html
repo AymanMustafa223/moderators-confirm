@@ -12,7 +12,7 @@ button{cursor:pointer}
 </head>
 <body>
 
-<h2>تسجيل دخول </h2>
+<h2>تسجيل الدخول</h2>
 <div id="loginDiv">
   <input type="text" id="username" placeholder="اسم المستخدم">
   <input type="password" id="password" placeholder="كلمة المرور">
@@ -22,24 +22,24 @@ button{cursor:pointer}
 
 <div id="orderDiv" style="display:none;">
   <h2>إضافة أوردرات</h2>
+  
   <input type="text" id="clientName" placeholder="اسم العميل">
-  <input type="text" id="phone" placeholder="رقم الموبايل">
-  <input type="text" id="phone" placeholder="كود المنتج">
-  <input type="text" id="phone" placeholder="اللون">
-  <input type="text" id="phone" placeholder="المقاس">
-  <input type="text" id="phone" placeholder="السعر">
+  <input type="text" id="clientPhone" placeholder="رقم الموبايل">
   
   <div id="productsContainer"></div>
+  
   <button onclick="addProduct()">إضافة منتج</button>
   <button onclick="submitOrder()">حفظ الأوردر</button>
 </div>
 
 <script>
+// قائمة المودريتورز
 const moderators = [
   {username:'admin', password:'1234'},
   {username:'mod1', password:'5678'}
 ];
 
+// تسجيل دخول
 function login(){
   const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
@@ -48,15 +48,49 @@ function login(){
     alert('تم تسجيل الدخول بنجاح!');
     document.getElementById('loginDiv').style.display='none';
     document.getElementById('orderDiv').style.display='block';
+    addProduct(); // إضافة أول منتج تلقائيًا
+    window.currentModerator = username; // حفظ اسم المودريتور
   } else {
     alert('خطأ في اسم المستخدم أو كلمة المرور');
   }
+}
+
+// إضافة منتج جديد
+function addProduct(){
+  const container = document.getElementById('productsContainer');
+  const div = document.createElement('div');
+  div.className = 'product-block';
+  div.innerHTML = `
+    <h4>منتج جديد</h4>
+    <input type="text" placeholder="كود المنتج" class="productCode">
+    <input type="text" placeholder="اللون" class="color">
+    <input type="text" placeholder="المقاس" class="size">
+    <input type="number" placeholder="السعر" class="price">
+  `;
+  container.appendChild(div);
+}
+
+// حفظ الأوردر وجمع البيانات
+function submitOrder(){
+  const clientName = document.getElementById('clientName').value;
+  const clientPhone = document.getElementById('clientPhone').value;
+  
+  const prodsDivs = document.querySelectorAll('.product-block');
+  const products = Array.from(prodsDivs).map(div => ({
+    productCode: div.querySelector('.productCode').value,
+    color: div.querySelector('.color').value,
+    size: div.querySelector('.size').value,
+    price: div.querySelector('.price').value
+  }));
+  
+  // عرض البيانات في console للتجربة
+  console.log('المودريتور:', window.currentModerator);
+  console.log('العميل:', clientName, clientPhone);
+  console.log('المنتجات:', products);
+  
+  alert('تم حفظ الأوردر! تحقق من console للبيانات.');
 }
 </script>
 
 </body>
 </html>
-
-
-
-
