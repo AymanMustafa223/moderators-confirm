@@ -5,7 +5,7 @@
 <title>نظام تأكيد الأوردرات</title>
 <style>
 body{font-family:Arial;padding:20px;direction:rtl;max-width:700px;margin:auto}
-input,button,select{width:100%;padding:8px;margin:6px 0}
+input,button{width:100%;padding:8px;margin:6px 0}
 button{cursor:pointer}
 .product-block{border:1px solid #ccc;padding:10px;margin-top:10px;border-radius:5px}
 </style>
@@ -22,7 +22,6 @@ button{cursor:pointer}
 
 <div id="orderDiv" style="display:none;">
   <h2>إضافة أوردرات</h2>
-  
   <input type="text" id="clientName" placeholder="اسم العميل">
   <input type="text" id="clientPhone" placeholder="رقم الموبايل">
   
@@ -33,13 +32,11 @@ button{cursor:pointer}
 </div>
 
 <script>
-// قائمة المودريتورز
 const moderators = [
   {username:'admin', password:'1234'},
   {username:'mod1', password:'5678'}
 ];
 
-// تسجيل دخول
 function login(){
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
@@ -48,14 +45,13 @@ function login(){
     alert('تم تسجيل الدخول بنجاح!');
     document.getElementById('loginDiv').style.display='none';
     document.getElementById('orderDiv').style.display='block';
-    addProduct(); // إضافة أول منتج تلقائيًا
-    window.currentModerator = username; // حفظ اسم المودريتور
+    addProduct();
+    window.currentModerator = username;
   } else {
     alert('خطأ في اسم المستخدم أو كلمة المرور');
   }
 }
 
-// إضافة منتج جديد
 function addProduct(){
   const container = document.getElementById('productsContainer');
   const div = document.createElement('div');
@@ -70,18 +66,16 @@ function addProduct(){
   container.appendChild(div);
 }
 
-// حفظ الأوردر وإرسال البيانات للـ Google Sheet
 function submitOrder(){
   const clientName = document.getElementById('clientName').value.trim();
   const clientPhone = document.getElementById('clientPhone').value.trim();
-  
   if(!clientName || !clientPhone){
     alert('يرجى إدخال اسم العميل ورقم الموبايل.');
     return;
   }
 
   const prodsDivs = document.querySelectorAll('.product-block');
-  if(prodsDivs.length === 0){
+  if(prodsDivs.length===0){
     alert('يرجى إضافة منتج واحد على الأقل.');
     return;
   }
@@ -100,31 +94,17 @@ function submitOrder(){
     products: products
   };
 
-  // تحقق من صحة JSON قبل الإرسال
-  console.log('Payload:', JSON.stringify(payload));
-
-  fetch('https://script.google.com/macros/s/AKfycbwM7tqibWpTD0qQ7LLTew7x_l15M1TtnzqhKlT1kaKmNiSDwwYXl6tBd6zPVyb1jgw/exec', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
-  })
-  .then(res => res.json())
-  .then(data => {
-    if(data.status==='ok'){
+  google.script.run.withSuccessHandler((res)=>{
+    if(res.status==='ok'){
       alert('تم حفظ الأوردر بنجاح!');
-      // تنظيف الفورم بعد الحفظ
       document.getElementById('clientName').value='';
       document.getElementById('clientPhone').value='';
       document.getElementById('productsContainer').innerHTML='';
-      addProduct(); // إضافة منتج فارغ جديد
-    } else {
-      alert('حدث خطأ: '+data.error);
+      addProduct();
     }
-  })
-  .catch(err => alert('حدث خطأ: '+err.message));
+  }).saveOrder(payload);
 }
 </script>
 
 </body>
 </html>
-
