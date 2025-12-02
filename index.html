@@ -12,7 +12,7 @@ button{cursor:pointer}
 </head>
 <body>
 
-<h2>تسجيل دخول المودريتور</h2>
+<h2>تسجيل دخول </h2>
 <div id="loginDiv">
   <input type="text" id="username" placeholder="اسم المستخدم">
   <input type="password" id="password" placeholder="كلمة المرور">
@@ -38,7 +38,7 @@ function login(){
   const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
   // تحقق محلي مؤقت (يمكن تعديل للتأكد من Web App)
-  fetch('YOUR_WEB_APP_URL', { // مؤقت للتحقق
+  fetch('https://script.google.com/macros/s/AKfycbymUViqNl2ow7Z0xTK802_B453RlvUKvutLYJ3VQpeEd0CMKKftGVAxQqDUmJko1Xk/exec', { // مؤقت للتحقق
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({checkLogin:true, username,password})
@@ -93,3 +93,4 @@ function submitOrder(){
 
 </body>
 </html>
+
